@@ -5,6 +5,7 @@ import Guess from "~/app/(game)/Guess";
 import WordBank from "~/app/(game)/WordBank";
 import useWordle from "~/app/(game)/useWordle";
 import { Button } from "~/components/ui/button";
+import Keypad from "./Keypad";
 
 export default function Game() {
   const {
@@ -74,6 +75,7 @@ export default function Game() {
       <div className="mt-3 flex justify-center">
         <WordBank wordBank={wordBank} />
       </div>{" "}
+      <Keypad />
     </div>
   );
 }
