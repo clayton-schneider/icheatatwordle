@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+type WordBank = Record<string, string>;
+
 const useWordle = () => {
   // track current user input
   const [curGuess, setCurGuess] = useState("");
@@ -15,7 +17,7 @@ const useWordle = () => {
 
   const fetchWords = async () => {
     const res = await fetch("/wordle-dictionary.json");
-    const data = await res.json();
+    const data = (await res.json()) as WordBank;
 
     return Object.keys(data);
   };
@@ -25,7 +27,9 @@ const useWordle = () => {
     setCurColors(["grey", "grey", "grey", "grey", "grey"]);
     setWordBoard([]);
     setColorBoard([]);
-    fetchWords().then((data) => setWordBank(data));
+    fetchWords()
+      .then((data) => setWordBank(data))
+      .catch((err) => console.log("There was an error fetching words: ", err));
   };
 
   // game keyboard controller
@@ -76,7 +80,7 @@ const useWordle = () => {
 
     console.log("filtering!");
 
-    let newWordBank = wordBank.filter((bankWord: any) => {
+    const newWordBank = wordBank.filter((bankWord) => {
       let passes = true;
 
       wordBoard.map((guessWord, wordIndex) => {
@@ -95,7 +99,7 @@ const useWordle = () => {
           // If grey and contains
           if (
             colorBoard[wordIndex]![letterIndex] === "grey" &&
-            bankWord.includes(guessWord[letterIndex])
+            bankWord.includes(guessWord[letterIndex]!)
           ) {
             passes = false;
             return;
@@ -113,7 +117,7 @@ const useWordle = () => {
           // if yellow and doesn't contain
           if (
             colorBoard[wordIndex]![letterIndex] === "yellow" &&
-            !bankWord.includes(guessWord[letterIndex])
+            !bankWord.includes(guessWord[letterIndex]!)
           ) {
             passes = false;
             return;
