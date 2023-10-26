@@ -1,8 +1,4 @@
-import type {
-  wordBank,
-  setWordBank,
-  FilterWords,
-} from "~/app/(game)/useWordle";
+import type { wordBank } from "~/app/(game)/useWordle";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Separator } from "~/components/ui/separator";
 
@@ -17,13 +13,12 @@ const WordBank = ({ wordBank }: IWordBankProps) => {
           <h4 className="mb-4 text-sm font-medium leading-none">
             Possible Words
           </h4>
-          {wordBank &&
-            wordBank.map((word, i) => (
-              <div key={word}>
-                <div className="text-sm">{word}</div>
-                <Separator className="my-2" />
-              </div>
-            ))}
+          {wordBank?.map((word) => (
+            <div key={word}>
+              <div className="text-sm">{word}</div>
+              <Separator className="my-2" />
+            </div>
+          ))}
         </div>
       </ScrollArea>
     </div>

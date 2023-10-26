@@ -89,7 +89,7 @@ const useWordle = () => {
           return;
         }
 
-        guessWord.split("").map((letter, letterIndex) => {
+        guessWord.split("").map((_, letterIndex) => {
           if (!passes) {
             return;
           }
