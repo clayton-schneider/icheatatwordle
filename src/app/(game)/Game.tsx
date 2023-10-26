@@ -30,10 +30,12 @@ export default function Game() {
     fetchWords()
       .then((data) => setWordBank(data))
       .catch((err) => console.log("There Was An Error: ", err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     setWordBank(filterWords(wordBank));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wordBoard]);
 
   return (
