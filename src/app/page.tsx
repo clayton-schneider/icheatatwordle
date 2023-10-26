@@ -1,7 +1,7 @@
 import PageHeader from "~/components/PageHeader";
 import Game from "./(game)/Game";
 
-export default async function Home() {
+export default function Home() {
   return (
     <main>
       <PageHeader />
