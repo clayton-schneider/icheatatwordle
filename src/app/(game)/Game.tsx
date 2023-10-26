@@ -27,7 +27,9 @@ export default function Game() {
   }, [handleKeys]);
 
   useEffect(() => {
-    fetchWords().then((data) => setWordBank(data));
+    fetchWords()
+      .then((data) => setWordBank(data))
+      .catch((err) => console.log("There Was An Error: ", err));
   }, []);
 
   useEffect(() => {
@@ -43,24 +45,23 @@ export default function Game() {
       <div className="mt-5 flex flex-col items-center justify-center">
         <p className="text-lg">Your Guesses:</p>
         <div>
-          {colorBoard &&
-            colorBoard.map((colors, i) => (
-              <div key={`guess-${i}`} className="">
-                {wordBoard[i]?.split("").map((letter, j) => (
-                  <p
-                    key={`letter-${i}-${j}`}
-                    className={cx(
-                      "inline text-lg font-bold",
-                      colors[j] === "grey" && "text-gray-500",
-                      colors[j] === "yellow" && "text-yellow-500",
-                      colors[j] === "green" && "text-green-500",
-                    )}
-                  >
-                    {letter}
-                  </p>
-                ))}
-              </div>
-            ))}
+          {colorBoard?.map((colors, i) => (
+            <div key={`guess-${i}`} className="">
+              {wordBoard[i]?.split("").map((letter, j) => (
+                <p
+                  key={`letter-${i}-${j}`}
+                  className={cx(
+                    "inline text-lg font-bold",
+                    colors[j] === "grey" && "text-gray-500",
+                    colors[j] === "yellow" && "text-yellow-500",
+                    colors[j] === "green" && "text-green-500",
+                  )}
+                >
+                  {letter}
+                </p>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
       <div className="mt-3 flex justify-center">
