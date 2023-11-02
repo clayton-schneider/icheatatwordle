@@ -6,6 +6,13 @@ import WordBank from "~/app/(game)/WordBank";
 import useWordle from "~/app/(game)/useWordle";
 import { Button } from "~/components/ui/button";
 import Keypad from "./Keypad";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import { Info } from "lucide-react";
 
 export default function Game() {
   const {
@@ -41,12 +48,36 @@ export default function Game() {
 
   return (
     <div className="px-edge">
-      <h2 className="text-center">Your Current Guess</h2>
+      <div className="flex justify-center space-x-2">
+        <h2 className="text-center">Your Current Guess</h2>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Info />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Click the boxes to cycle through correctness</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
       <div className="mt-3 flex justify-center">
         <Guess letters={curGuess} colors={curColors} setColors={setCurColors} />
       </div>
       <div className="mt-5 flex flex-col items-center justify-center">
-        <p className="text-lg">Your Guesses:</p>
+        <div className="flex justify-center space-x-2">
+          <p className="text-lg">Your Guesses:</p>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Your entered guesses will show here</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <div>
           {colorBoard?.map((colors, i) => (
             <div key={`guess-${i}`} className="">
