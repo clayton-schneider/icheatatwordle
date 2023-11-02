@@ -136,7 +136,6 @@ const useWordle = () => {
 
       return passes;
     });
-    console.log(wordBank.length, newWordBank.length);
     return newWordBank;
   };
 
