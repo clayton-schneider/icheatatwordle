@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-type WordBank = Record<string, string>;
+type WordBank = string[];
 
 const useWordle = () => {
   // track current user input
@@ -17,9 +17,7 @@ const useWordle = () => {
 
   const fetchWords = async () => {
     const res = await fetch("/wordle-dictionary.json");
-    const data = (await res.json()) as WordBank;
-
-    return Object.keys(data);
+    return (await res.json()) as WordBank;
   };
 
   const resetGame = () => {
