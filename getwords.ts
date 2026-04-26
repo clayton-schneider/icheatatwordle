@@ -1,46 +1,50 @@
+import { writeFileSync } from "fs";
 
 async function main() {
-  // find wordle js bundle
-  //  - find substring
-  //  - back up and expand to full URL
-  //  - verify a js file
-  // get source
-  // extract words
 
-  // const WORDLE_URL = "https://www.nytimes.com/games/wordle/index.html";
-  const BUNDLE_SRCH_STR = "https://www.nytimes.com/games-assets/v2/wordle";
+  const WORDLE_URL = "https://www.nytimes.com/games/wordle/index.html";
+  const CHUNK_TXT = "https://www.nytimes.com/games-assets/v2/"
 
   const response = await fetch(WORDLE_URL);
-  const html = await response.text();
+  let html = await response.text();
 
-  builtin(html, BUNDLE_SRCH_STR);
-}
+  // Find first chunk
+  let idx_start = html.indexOf(CHUNK_TXT);
 
-function builtin(str: string, src: string) {
-  // need to perform multiple times until .js found
-  let idx_start = str.indexOf(src);
-  let bundle_url = null;
+  const chunk_urls: string[] = []
 
   while (idx_start !== -1) {
     let idx_end = -1
-    for (let i = idx_start; i < str.length; i++) {
-      if (str[i] == "\"") {
+    for (let i = idx_start; i < html.length; i++) {
+      if (html[i] == "\"") {
         idx_end = i;
         break;
       }
     }
 
-    bundle_url = str.slice(idx_start, idx_end);
-    if (bundle_url.slice(-3) === ".js") {
-      break;
-    }
+    let bundle_url = html.slice(idx_start, idx_end);
+    chunk_urls.push(bundle_url);
 
-    str = str.slice(idx_end);
-    idx_start = str.indexOf(src)
+    html = html.slice(idx_end);
+    idx_start = html.indexOf(CHUNK_TXT);
   }
 
-  if (bundle_url?.slice(-3) !== ".js") { console.log("Can't find bundle url"); return; }
-  console.log(bundle_url);
+  const REGEX = /\["[a-z]{5}"(?:,"[a-z]{5}")+\]/
+  let words;
+  for (const url of chunk_urls) {
+    let match = null;
+    if (url.slice(-3) !== ".js") { continue; }
+    const js_res = await fetch(url);
+    let js_text = await js_res.text();
+    match = js_text.match(REGEX);
+    if (match) {
+      words = match[0];
+      break;
+    }
+  }
+  if (!words) { console.log("No word array found"); return; }
+  writeFileSync("src/words.json", words);
 }
+
 
 main();
