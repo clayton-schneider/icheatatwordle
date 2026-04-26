@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "getwords": "tsx getwords.ts"
+    "getwords": "tsx getwords.ts",
+    "benchmark": "tsx benchmark.ts"
   },
   "devDependencies": {
     "tsx": "^4.7.0",
