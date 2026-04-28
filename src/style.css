@@ -1,7 +1,7 @@
 :root {
-  --text: #6b6375;
+  --text: #818384;
   --text-h: #08060d;
-  --bg: #fff;
+  --bg: #0D0D0D;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
@@ -17,7 +17,7 @@
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: dark light;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -30,28 +30,32 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+@media (prefers-color-scheme: light) {
+  /* :root { */
+  /*   --text: #9ca3af; */
+  /*   --text-h: #f3f4f6; */
+  /*   --bg: #16171d; */
+  /*   --border: #2e303a; */
+  /*   --code-bg: #1f2028; */
+  /*   --accent: #c084fc; */
+  /*   --accent-bg: rgba(192, 132, 252, 0.15); */
+  /*   --accent-border: rgba(192, 132, 252, 0.5); */
+  /*   --social-bg: rgba(47, 48, 58, 0.5); */
+  /*   --shadow: */
+  /*     rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px; */
+  /* } */
+  /**/
+  /* #social .button-icon { */
+  /*   filter: invert(1) brightness(2); */
+  /* } */
 }
 
 body {
   margin: 0;
+}
+
+header {
+  text-transform: uppercase;
 }
 
 h1,
@@ -82,6 +86,7 @@ h2 {
 p {
   margin: 0;
 }
+
 
 code,
 .counter {
@@ -114,45 +119,6 @@ code {
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-  }
-}
-
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
   }
 }
 
@@ -206,7 +172,6 @@ code {
     text-align: center;
   }
 }
-
 #docs {
   border-right: 1px solid var(--border);
 
