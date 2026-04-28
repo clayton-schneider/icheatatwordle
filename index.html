@@ -7,24 +7,42 @@
     <title>icheatatwordle</title>
   </head>
   <body>
+    <main>
     <header>I Cheat At Wordle</header>
-    <div>
+    <div class="guess">
       <p>Your Guess - Tap tile to mark result</p>
-      <div>a</div>
-      <div>p</div>
-      <div>p</div>
-      <div>l</div>
-      <div>e</div>
-    </div>
-
-    <div>
-      <input type="text"> <p>15 words</p>
-      <div>
-        <div>Apple</div>
+      <div class="guess-container">
+        <div>a</div>
+        <div>p</div>
+        <div>p</div>
+        <div>l</div>
+        <div>e</div>
       </div>
     </div>
-    <div>
-      <div>
+
+    <div class="search">
+      <input type="text"> 
+      <p>15 words</p>
+    </div>
+    <div class="results">
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+      <div class="result"><p>Apple</p><p>Use →</p></div>
+    </div>
+    <div class="keyboard">
+      <div class="keyboard-row">
         <button type="button">Q</button>
         <button type="button">W</button>
         <button type="button">E</button>
@@ -37,7 +55,8 @@
         <button type="button">P</button>
       </div>
 
-      <div>
+      <div class="keyboard-row">
+        <div class="spacer"></div>
         <button type="button">A</button>
         <button type="button">S</button>
         <button type="button">D</button>
@@ -47,10 +66,11 @@
         <button type="button">J</button>
         <button type="button">K</button>
         <button type="button">L</button>
+        <div class="spacer"></div>
       </div>
 
-      <div>
-        <button type="button">ENTER</button>
+      <div class="keyboard-row">
+        <button type="button" class="large-button">ENTER</button>
         <button type="button">Z</button>
         <button type="button">X</button>
         <button type="button">C</button>
@@ -58,9 +78,10 @@
         <button type="button">B</button>
         <button type="button">N</button>
         <button type="button">M</button>
-        <button type="button">DEL</button>
+        <button type="button" class="large-button">DEL</button>
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
+      </main>
   </body>
 </html>
