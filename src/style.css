@@ -73,7 +73,6 @@ p {
     > div {
       width: 54px;
       height: 54px;
-      background: transparent;
       border: 2px solid var(--border);
       border-radius: 6px;
 
@@ -86,6 +85,10 @@ p {
       cursor: pointer;
       color: var(--text-light);
       user-select: none;
+
+      &[data-correctness="0"] { background: transparent; }
+      &[data-correctness="1"] { background: var(--yellow); }
+      &[data-correctness="2"] { background: var(--green); }
     }
   }
 }
