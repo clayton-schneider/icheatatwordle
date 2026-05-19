@@ -27,6 +27,7 @@ let words = allWords;
   const results_div = document.querySelector(".results")!;
   const mode_btn = document.querySelector(".mode > button")!;
   const search_box = document.querySelector(".search > input") as HTMLInputElement;
+  const word_ct = document.querySelector(".word-count") as HTMLSpanElement;
 
   // need to enter search mode when search is focused
   mode_btn.addEventListener("click", () => { setSearchMode(!searchMode); })
@@ -37,10 +38,15 @@ let words = allWords;
   search_box.addEventListener("focusout", () => {
     if (searchMode) setSearchMode(false)
   });
+  search_box.addEventListener("input", () => {
+    const query = search_box.value.toLowerCase();
+    const w = words.filter(word => word.includes(query))
+    renderWords(w)
+  })
 
 
 
-  renderWords();
+  renderWords(words);
   boxes.forEach((box, box_idx) => {
     box.addEventListener("click", () => {
       cur_guess.correctness[box_idx] = (cur_guess.correctness[box_idx] + 1) % 3;
@@ -79,7 +85,7 @@ let words = allWords;
       }
 
       filterWords(cur_guess);
-      renderWords();
+      renderWords(words);
 
       cur_guess = {
         word: "",
@@ -145,7 +151,8 @@ let words = allWords;
     })
   }
 
-  function renderWords() {
+  function renderWords(words: string[]) {
+    word_ct.innerText = words.length.toString();
     results_div.innerHTML = "";
     words.forEach(w => {
       const wrap_div = document.createElement('div');
