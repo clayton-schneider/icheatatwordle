@@ -4,9 +4,7 @@ let words = allWords;
 
 (function() {
 
-  // [x] - Collect keyboard events
   // [] - Handle displayed key button presses
-  // [] - Change color of guess boxed on click
   // [] - Filter available words
   // [] - Display available words
   //  [] - Virtual scrolling
@@ -16,6 +14,9 @@ let words = allWords;
     correctness: number[];
   }
 
+
+  let searchMode = false;
+
   const nw = words.slice(0, 100);
   // Initial App Setup
   let cur_guess = {
@@ -24,6 +25,19 @@ let words = allWords;
   }
   const boxes = document.querySelectorAll(".guess-container > div");
   const results_div = document.querySelector(".results")!;
+  const mode_btn = document.querySelector(".mode > button")!;
+  const search_box = document.querySelector(".search > input") as HTMLInputElement;
+
+  // need to enter search mode when search is focused
+  mode_btn.addEventListener("click", () => { setSearchMode(!searchMode); })
+
+  search_box.addEventListener("focusin", () => {
+    if (!searchMode) setSearchMode(true)
+  });
+  search_box.addEventListener("focusout", () => {
+    if (searchMode) setSearchMode(false)
+  });
+
 
 
   renderWords();
@@ -35,10 +49,17 @@ let words = allWords;
   })
 
   document.addEventListener("keydown", e => {
-    e.preventDefault();
     const key = e.key.toLowerCase();
-    if (key.length === 1 && key >= 'a' && key <= 'z') { handleKey(key); }
 
+    if (e.shiftKey && key == "tab") {
+      e.preventDefault();
+      setSearchMode(!searchMode);
+    }
+
+    if (searchMode) return
+
+    e.preventDefault();
+    if (key.length === 1 && key >= 'a' && key <= 'z') { handleKey(key); }
     if (key === 'enter') { handleKey('enter'); }
     if (key === 'backspace') { handleKey('del'); }
   })
@@ -75,6 +96,19 @@ let words = allWords;
 
       cur_guess.word = cur_guess.word + key;
       updateGuess(cur_guess.word);
+    }
+  }
+
+  function setSearchMode(val: boolean) {
+    searchMode = val;
+    if (val) {
+      mode_btn.textContent = "Search Mode";
+      mode_btn.setAttribute("data-mode", "search")
+      search_box.focus();
+    } else {
+      mode_btn.textContent = "Enter Mode";
+      mode_btn.setAttribute("data-mode", "enter")
+      search_box.blur();
     }
   }
 

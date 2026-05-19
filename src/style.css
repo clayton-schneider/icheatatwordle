@@ -119,6 +119,29 @@ p {
   }
 }
 
+.mode {
+  padding: 4px 16px 12px;
+
+  > button {
+    background: var(--bg-lighter);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-light);
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    cursor: pointer;
+
+    &[data-mode="search"] {
+      background: var(--yellow);
+      colot: var(--text)
+    }
+  }
+}
+
 .results {
   display: flex;
   gap: 6px;
