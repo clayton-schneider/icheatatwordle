@@ -51,10 +51,14 @@ let words = allWords;
   search_box.addEventListener("focusout", () => {
     if (searchMode) set_search_mode(false)
   });
+  let search_timer: number | undefined;
   search_box.addEventListener("input", () => {
-    const query = search_box.value.toLowerCase();
-    const w = words.filter(word => word.includes(query))
-    render_words(w)
+    clearTimeout(search_timer);
+    search_timer = setTimeout(() => {
+      const query = search_box.value.toLowerCase();
+      const w = words.filter(word => word.includes(query))
+      render_words(w)
+    }, 100);
   })
 
 
