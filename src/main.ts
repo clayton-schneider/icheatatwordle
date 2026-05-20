@@ -37,89 +37,92 @@ let words = allWords;
     word: "",
     correctness: new Array(5).fill(0)
   }
-  const boxes = document.querySelectorAll(".guess-container > div");
-  const results_div = document.querySelector(".results")!;
-  const mode_btn = document.querySelector(".mode > button")!;
-  const search_box = document.querySelector(".search > input") as HTMLInputElement;
-  const word_ct = document.querySelector(".word-count") as HTMLSpanElement;
+  const boxes = document.querySelectorAll<HTMLDivElement>(".guess-container > div")!;
+  const results_div = document.querySelector<HTMLDivElement>(".results")!;
+  const mode_btn = document.querySelector<HTMLButtonElement>(".mode > button")!;
+  const search_box = document.querySelector<HTMLInputElement>(".search > input")!;
+  const word_ct = document.querySelector<HTMLSpanElement>(".word-count")!;
 
-  // need to enter search mode when search is focused
-  mode_btn.addEventListener("click", () => { setSearchMode(!searchMode); })
+  mode_btn.addEventListener("click", () => { set_search_mode(!searchMode); })
 
   search_box.addEventListener("focusin", () => {
-    if (!searchMode) setSearchMode(true)
+    if (!searchMode) set_search_mode(true)
   });
   search_box.addEventListener("focusout", () => {
-    if (searchMode) setSearchMode(false)
+    if (searchMode) set_search_mode(false)
   });
   search_box.addEventListener("input", () => {
     const query = search_box.value.toLowerCase();
     const w = words.filter(word => word.includes(query))
-    renderWords(w)
+    render_words(w)
   })
 
 
 
-  renderWords(words);
+  render_words(words);
   boxes.forEach((box, box_idx) => {
     box.addEventListener("click", () => {
-      cur_guess.correctness[box_idx] = (cur_guess.correctness[box_idx] + 1) % 3;
-      box.setAttribute("data-correctness", cur_guess.correctness[box_idx].toString());
+      cycle_box_correctness(box, box_idx)
     })
   })
+
+  function cycle_box_correctness(box_elem: HTMLDivElement, box_idx: number) {
+    cur_guess.correctness[box_idx] = (cur_guess.correctness[box_idx] + 1) % 3;
+    box_elem.setAttribute("data-correctness", cur_guess.correctness[box_idx].toString());
+  }
 
   document.addEventListener("keydown", e => {
     const key = e.key.toLowerCase();
 
     if (e.shiftKey && key == "tab") {
       e.preventDefault();
-      setSearchMode(!searchMode);
+      set_search_mode(!searchMode);
     }
 
     if (searchMode) return
 
     e.preventDefault();
-    if (key.length === 1 && key >= 'a' && key <= 'z') { handleKey(key); }
-    if (key === 'enter') { handleKey('enter'); }
-    if (key === 'backspace') { handleKey('del'); }
+    if (key.length === 1 && key >= 'a' && key <= 'z') { handle_key(key); }
+    if (key === 'enter') { handle_key('enter'); }
+    if (key === 'backspace') { handle_key('del'); }
   })
 
   document.querySelectorAll(".keyboard > .keyboard-row > button").forEach(btn => {
     if (!(btn instanceof HTMLElement)) { return; }
     const key = btn.dataset.key;
     if (key === undefined) { console.log('ERROR: Set key data val'); return; }
-    btn.addEventListener("click", () => handleKey(key))
+    btn.addEventListener("click", () => handle_key(key))
   })
 
-  function handleKey(key: string) {
+  function handle_key(key: string) {
     if (key === "enter") {
       if (cur_guess.word.length !== 5) {
         alert("Your guess must be of length 5")
         return;
       }
 
-      filterWords(cur_guess);
-      renderWords(words);
+      reduce_words(cur_guess);
+      render_words(words);
 
       cur_guess = {
         word: "",
         correctness: new Array(5).fill(5)
       }
       boxes.forEach((box, box_idx) => box.setAttribute("data-correctness", cur_guess.correctness[box_idx]))
-      updateGuess(cur_guess.word);
+      update_guess(cur_guess.word);
     } else if (key === "del") {
       if (cur_guess.word.length === 0) { return; }
       cur_guess.word = cur_guess.word.slice(0, cur_guess.word.length - 1);
-      updateGuess(cur_guess.word);
+      update_guess(cur_guess.word);
     } else {
       if (cur_guess.word.length === 5) { return; }
 
       cur_guess.word = cur_guess.word + key;
-      updateGuess(cur_guess.word);
+      update_guess(cur_guess.word);
     }
   }
 
-  function setSearchMode(val: boolean) {
+  function set_search_mode(val: boolean) {
     searchMode = val;
     if (val) {
       mode_btn.textContent = "Search Mode";
@@ -132,7 +135,7 @@ let words = allWords;
     }
   }
 
-  function updateGuess(word: string) {
+  function update_guess(word: string) {
     let ct = 0;
     for (let i = 0; i < word.length; i++) {
       boxes[i].innerHTML = word[i];
@@ -144,7 +147,7 @@ let words = allWords;
     }
   }
 
-  function filterWords(g: Guess) {
+  function reduce_words(g: Guess) {
     words = words.filter(word => {
       for (let i = 0; i < g.word.length; i++) {
         // remove words with grey letter
@@ -165,7 +168,7 @@ let words = allWords;
     })
   }
 
-  function renderWords(words: string[]) {
+  function render_words(words: string[]) {
     word_ct.innerText = words.length.toString();
     results_div.innerHTML = "";
     words.forEach(w => {
