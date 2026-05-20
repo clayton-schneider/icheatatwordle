@@ -3,6 +3,21 @@ import allWords from "./words.json";
 let words = allWords;
 
 (function() {
+  // UI
+  //  Current Guess
+  //  Search
+  //  Available Guesses
+  //  Keyboard
+  //  Light/Dark Mode
+  //
+  //  Connection - UI to Core
+  //
+  // Core
+  //  Reset
+  //  Guess Tracking
+  //  Available Words
+  //  Search Mode
+  //    - Word filtering
 
   // [] - Handle displayed key button presses
   // [] - Filter available words
@@ -17,7 +32,6 @@ let words = allWords;
 
   let searchMode = false;
 
-  const nw = words.slice(0, 100);
   // Initial App Setup
   let cur_guess = {
     word: "",
