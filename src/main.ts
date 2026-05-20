@@ -62,13 +62,13 @@ let words = allWords;
   render_words(words);
   boxes.forEach((box, box_idx) => {
     box.addEventListener("click", () => {
-      cycle_box_correctness(box, box_idx)
+      cycle_box_correctness(box_idx)
     })
   })
 
-  function cycle_box_correctness(box_elem: HTMLDivElement, box_idx: number) {
+  function cycle_box_correctness(box_idx: number) {
     cur_guess.correctness[box_idx] = (cur_guess.correctness[box_idx] + 1) % 3;
-    box_elem.setAttribute("data-correctness", cur_guess.correctness[box_idx].toString());
+    boxes[box_idx].setAttribute("data-correctness", cur_guess.correctness[box_idx].toString());
   }
 
   document.addEventListener("keydown", e => {
@@ -82,6 +82,7 @@ let words = allWords;
     if (searchMode) return
 
     e.preventDefault();
+    if (key.length === 1 && key >= "1" && key <= "5") { handle_key(key) }
     if (key.length === 1 && key >= 'a' && key <= 'z') { handle_key(key); }
     if (key === 'enter') { handle_key('enter'); }
     if (key === 'backspace') { handle_key('del'); }
@@ -114,6 +115,8 @@ let words = allWords;
       if (cur_guess.word.length === 0) { return; }
       cur_guess.word = cur_guess.word.slice(0, cur_guess.word.length - 1);
       update_guess(cur_guess.word);
+    } else if (key >= "1" && key <= "5") {
+      cycle_box_correctness(Number(key));
     } else {
       if (cur_guess.word.length === 5) { return; }
 
