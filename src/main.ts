@@ -47,7 +47,16 @@ let words = allWords;
     update_guess(cur_guess.word);
   });
 
-  mode_btn.addEventListener("click", () => { set_search_mode(!searchMode); })
+  let mode_btn_search_mode_on_pointerdown = searchMode;
+  mode_btn.addEventListener("pointerdown", () => {
+    mode_btn_search_mode_on_pointerdown = searchMode;
+  });
+  mode_btn.addEventListener("click", e => {
+    // check if fired by keyboard or "real" click
+    //
+    const mode_to_toggle = e.detail === 0 ? searchMode : mode_btn_search_mode_on_pointerdown;
+    set_search_mode(!mode_to_toggle);
+  })
   reset_btn.addEventListener("click", reset_app);
   theme_toggle.addEventListener("click", toggle_theme);
 
