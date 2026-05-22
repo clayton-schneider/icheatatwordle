@@ -4,6 +4,7 @@
   --bg: #0D0D0D;
   --bg-lighter: #1A1A1B;
   --border: #3A3A3C;
+  --key-bg: var(--text);
   --max-width: 500px;
 
   --green: #6AAA64;
@@ -26,6 +27,16 @@
   }
 }
 
+:root[data-theme="light"] {
+  --text: #4B5563;
+  --text-light: #111827;
+  --bg: #F8FAFC;
+  --bg-lighter: #FFFFFF;
+  --border: #D1D5DB;
+  --key-bg: #F3F4F6;
+  color-scheme: light;
+}
+
 body {
   margin: 0;
   height: 100dvh;
@@ -41,6 +52,7 @@ main {
 }
 
 header {
+  position: relative;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -48,6 +60,22 @@ header {
   border-bottom: 1px solid var(--border);
   text-align: center;
   text-transform: uppercase;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-lighter);
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
 }
 
 p {
@@ -227,7 +255,7 @@ p {
       flex: 1;
       height: 58px;
 
-      background: var(--text);
+      background: var(--key-bg);
       border: 0;
       border-radius: 6px;
       color: var(--text-light);

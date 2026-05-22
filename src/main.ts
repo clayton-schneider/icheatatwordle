@@ -29,8 +29,11 @@ let words = allWords;
   const results_window = document.querySelector<HTMLDivElement>(".results-window")!;
   const mode_btn = document.querySelector<HTMLButtonElement>(".mode-button")!;
   const reset_btn = document.querySelector<HTMLButtonElement>(".reset-button")!;
+  const theme_toggle = document.querySelector<HTMLButtonElement>(".theme-toggle")!;
   const search_box = document.querySelector<HTMLInputElement>(".search > input")!;
   const word_ct = document.querySelector<HTMLSpanElement>(".word-count")!;
+
+  apply_theme(localStorage.getItem("theme") === "light" ? "light" : "dark");
 
   results_div.addEventListener("scroll", schedule_virtual_render);
   results_div.addEventListener("click", e => {
@@ -46,6 +49,7 @@ let words = allWords;
 
   mode_btn.addEventListener("click", () => { set_search_mode(!searchMode); })
   reset_btn.addEventListener("click", reset_app);
+  theme_toggle.addEventListener("click", toggle_theme);
 
   search_box.addEventListener("focusin", () => {
     if (!searchMode) set_search_mode(true)
@@ -148,6 +152,21 @@ let words = allWords;
       mode_btn.setAttribute("data-mode", "enter")
       search_box.blur();
     }
+  }
+
+  function apply_theme(theme: "light" | "dark") {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("theme", theme);
+    theme_toggle.textContent = theme === "light" ? "☾" : "☀";
+    theme_toggle.setAttribute(
+      "aria-label",
+      theme === "light" ? "Switch to dark mode" : "Switch to light mode"
+    );
+  }
+
+  function toggle_theme() {
+    const isLight = document.documentElement.dataset.theme === "light";
+    apply_theme(isLight ? "dark" : "light");
   }
 
   function reset_app() {
