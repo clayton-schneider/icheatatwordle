@@ -18,6 +18,7 @@ let words = allWords;
   let searchMode = false;
   let resultWords: string[] = words;
   let renderScheduled = false;
+  const guessedLetters = new Map<string, number>();
 
   // Initial App Setup
   let cur_guess = {
@@ -107,12 +108,13 @@ let words = allWords;
         return;
       }
 
+      update_keyboard_colors(cur_guess);
       reduce_words(cur_guess);
       set_result_words(words);
 
       cur_guess = {
         word: "",
-        correctness: new Array(5).fill(5)
+        correctness: new Array(5).fill(0)
       }
       boxes.forEach((box, box_idx) => box.setAttribute("data-correctness", cur_guess.correctness[box_idx]))
       update_guess(cur_guess.word);
@@ -153,6 +155,23 @@ let words = allWords;
     for (ct; ct < 5; ct++) {
       boxes[ct].innerHTML = "";
     }
+  }
+
+  function update_keyboard_colors(g: Guess) {
+    for (let i = 0; i < g.word.length; i++) {
+      const letter = g.word[i];
+      const correctness = g.correctness[i];
+      const previousCorrectness = guessedLetters.get(letter) ?? -1;
+
+      if (correctness > previousCorrectness) {
+        guessedLetters.set(letter, correctness);
+      }
+    }
+
+    guessedLetters.forEach((correctness, letter) => {
+      const key = document.querySelector<HTMLButtonElement>(`.keyboard button[data-key="${letter}"]`);
+      key?.setAttribute("data-correctness", correctness.toString());
+    })
   }
 
   function reduce_words(g: Guess) {

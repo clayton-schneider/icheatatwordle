@@ -225,6 +225,10 @@ p {
       padding: 0;
       flex-shrink: 0;
 
+      &[data-correctness="0"] { background: var(--border); }
+      &[data-correctness="1"] { background: var(--yellow); }
+      &[data-correctness="2"] { background: var(--green); }
+
       display: flex;
       justify-content: center;
       align-items: center;
