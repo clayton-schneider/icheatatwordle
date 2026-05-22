@@ -33,6 +33,16 @@ let words = allWords;
   const word_ct = document.querySelector<HTMLSpanElement>(".word-count")!;
 
   results_div.addEventListener("scroll", schedule_virtual_render);
+  results_div.addEventListener("click", e => {
+    const target = e.target;
+    if (!(target instanceof HTMLElement)) return;
+
+    const addButton = target.closest<HTMLElement>("[data-word]");
+    if (addButton === null) return;
+
+    cur_guess.word = addButton.dataset.word ?? "";
+    update_guess(cur_guess.word);
+  });
 
   mode_btn.addEventListener("click", () => { set_search_mode(!searchMode); })
 
@@ -199,7 +209,7 @@ let words = allWords;
     for (let i = startIndex; i < endIndex; i++) {
       const wrap_div = document.createElement('div');
       wrap_div.className = "result";
-      wrap_div.innerHTML = `<p>${resultWords[i]}</p><p>Use →</p>`;
+      wrap_div.innerHTML = `<p>${resultWords[i]}</p><button type="button" data-word="${resultWords[i]}">Add</button>`;
       results_window.appendChild(wrap_div);
     }
   }

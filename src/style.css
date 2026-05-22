@@ -185,11 +185,13 @@ p {
     font-weight: 700;
   }
 
-  > p:last-of-type {
+  > button {
     background: var(--green);
+    border: 0;
     color: var(--text-light);
     border-radius: 6px;
     padding: 6px 12px;
+    font-family: var(--sans);
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
