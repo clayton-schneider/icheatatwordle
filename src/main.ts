@@ -27,7 +27,8 @@ let words = allWords;
   const results_div = document.querySelector<HTMLDivElement>(".results")!;
   const results_spacer = document.querySelector<HTMLDivElement>(".results-spacer")!;
   const results_window = document.querySelector<HTMLDivElement>(".results-window")!;
-  const mode_btn = document.querySelector<HTMLButtonElement>(".mode > button")!;
+  const mode_btn = document.querySelector<HTMLButtonElement>(".mode-button")!;
+  const reset_btn = document.querySelector<HTMLButtonElement>(".reset-button")!;
   const search_box = document.querySelector<HTMLInputElement>(".search > input")!;
   const word_ct = document.querySelector<HTMLSpanElement>(".word-count")!;
 
@@ -44,6 +45,7 @@ let words = allWords;
   });
 
   mode_btn.addEventListener("click", () => { set_search_mode(!searchMode); })
+  reset_btn.addEventListener("click", reset_app);
 
   search_box.addEventListener("focusin", () => {
     if (!searchMode) set_search_mode(true)
@@ -78,11 +80,6 @@ let words = allWords;
   document.addEventListener("keydown", e => {
     const key = e.key.toLowerCase();
 
-    if ((e.ctrlKey || e.metaKey) && key === "r") {
-      e.preventDefault();
-      reset_app();
-      return;
-    }
 
     if (e.shiftKey && key == "tab") {
       e.preventDefault();
@@ -92,6 +89,10 @@ let words = allWords;
     if (searchMode) return
 
     e.preventDefault();
+    if ((e.ctrlKey || e.metaKey) && key === "r") {
+      reset_app();
+      return;
+    }
     if (key.length === 1 && key >= "1" && key <= "5") { handle_key(key) }
     if (key.length === 1 && key >= 'a' && key <= 'z') { handle_key(key); }
     if (key === 'enter') { handle_key('enter'); }

@@ -121,6 +121,9 @@ p {
 
 .mode {
   padding: 4px 16px 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
 
   > button {
     background: var(--bg-lighter);
@@ -137,8 +140,17 @@ p {
 
     &[data-mode="search"] {
       background: var(--yellow);
-      colot: var(--text)
+      color: var(--text)
     }
+  }
+
+  .reset-button {
+    background: #b91c1c;
+    border-color: #ef4444;
+  }
+
+  .reset-button:hover {
+    background: #dc2626;
   }
 }
 
