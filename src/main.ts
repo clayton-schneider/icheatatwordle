@@ -3,26 +3,8 @@ import allWords from "./words.json";
 let words = allWords;
 
 (function() {
-  // UI
-  //  Current Guess
-  //  Search
-  //  Available Guesses
-  //  Keyboard
-  //  Light/Dark Mode
-  //
-  //  Connection - UI to Core
-  //
-  // Core
-  //  Reset
-  //  Guess Tracking
-  //  Available Words
-  //  Search Mode
-  //    - Word filtering
 
   // [] - Handle displayed key button presses
-  // [] - Filter available words
-  // [] - Display available words
-  //  [] - Virtual scrolling
   // [] - On click result, add to guess jar
   interface Guess {
     word: string;
@@ -30,7 +12,12 @@ let words = allWords;
   }
 
 
+  const ROW_HEIGHT = 64;
+  const BUFFER_ROWS = 75;
+
   let searchMode = false;
+  let resultWords: string[] = words;
+  let renderScheduled = false;
 
   // Initial App Setup
   let cur_guess = {
@@ -39,9 +26,13 @@ let words = allWords;
   }
   const boxes = document.querySelectorAll<HTMLDivElement>(".guess-container > div")!;
   const results_div = document.querySelector<HTMLDivElement>(".results")!;
+  const results_spacer = document.querySelector<HTMLDivElement>(".results-spacer")!;
+  const results_window = document.querySelector<HTMLDivElement>(".results-window")!;
   const mode_btn = document.querySelector<HTMLButtonElement>(".mode > button")!;
   const search_box = document.querySelector<HTMLInputElement>(".search > input")!;
   const word_ct = document.querySelector<HTMLSpanElement>(".word-count")!;
+
+  results_div.addEventListener("scroll", schedule_virtual_render);
 
   mode_btn.addEventListener("click", () => { set_search_mode(!searchMode); })
 
@@ -57,13 +48,13 @@ let words = allWords;
     search_timer = setTimeout(() => {
       const query = search_box.value.toLowerCase();
       const w = words.filter(word => word.includes(query))
-      render_words(w)
+      set_result_words(w)
     }, 100);
   })
 
 
 
-  render_words(words);
+  set_result_words(words);
   boxes.forEach((box, box_idx) => {
     box.addEventListener("click", () => {
       cycle_box_correctness(box_idx)
@@ -107,7 +98,7 @@ let words = allWords;
       }
 
       reduce_words(cur_guess);
-      render_words(words);
+      set_result_words(words);
 
       cur_guess = {
         word: "",
@@ -175,14 +166,41 @@ let words = allWords;
     })
   }
 
-  function render_words(words: string[]) {
-    word_ct.innerText = words.length.toString();
-    results_div.innerHTML = "";
-    words.forEach(w => {
+  function set_result_words(newWords: string[]) {
+    resultWords = newWords;
+    word_ct.innerText = resultWords.length.toString();
+    results_spacer.style.height = `${resultWords.length * ROW_HEIGHT}px`;
+    results_div.scrollTop = 0;
+    render_virtual_words();
+  }
+
+  function schedule_virtual_render() {
+    if (renderScheduled) return;
+
+    renderScheduled = true;
+    requestAnimationFrame(() => {
+      renderScheduled = false;
+      render_virtual_words();
+    })
+  }
+
+  function render_virtual_words() {
+    const containerHeight = results_div.clientHeight;
+    const scrollTop = results_div.scrollTop;
+    const startIndex = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - BUFFER_ROWS);
+    const endIndex = Math.min(
+      resultWords.length,
+      Math.ceil((scrollTop + containerHeight) / ROW_HEIGHT) + BUFFER_ROWS
+    );
+
+    results_window.style.transform = `translateY(${startIndex * ROW_HEIGHT}px)`;
+    results_window.replaceChildren();
+
+    for (let i = startIndex; i < endIndex; i++) {
       const wrap_div = document.createElement('div');
       wrap_div.className = "result";
-      wrap_div.innerHTML = `<p>${w}</p><p>Use →</p>`;
-      results_div.appendChild(wrap_div);
-    })
+      wrap_div.innerHTML = `<p>${resultWords[i]}</p><p>Use →</p>`;
+      results_window.appendChild(wrap_div);
+    }
   }
 })();

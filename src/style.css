@@ -143,16 +143,31 @@ p {
 }
 
 .results {
-  display: flex;
-  gap: 6px;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
 }
 
+.results-spacer {
+  position: relative;
+  width: 100%;
+}
+
+.results-window {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 6px;
+  flex-direction: column;
+  align-items: center;
+}
+
 .result {
+  box-sizing: border-box;
+  min-height: 58px;
   padding: 10px 14px;
   max-width: 350px;
   width: 100%;
