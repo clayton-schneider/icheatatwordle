@@ -4,8 +4,6 @@ let words = allWords;
 
 (function() {
 
-  // [] - Handle displayed key button presses
-  // [] - On click result, add to guess jar
   interface Guess {
     word: string;
     correctness: number[];
@@ -80,6 +78,12 @@ let words = allWords;
   document.addEventListener("keydown", e => {
     const key = e.key.toLowerCase();
 
+    if ((e.ctrlKey || e.metaKey) && key === "r") {
+      e.preventDefault();
+      reset_app();
+      return;
+    }
+
     if (e.shiftKey && key == "tab") {
       e.preventDefault();
       set_search_mode(!searchMode);
@@ -143,6 +147,23 @@ let words = allWords;
       mode_btn.setAttribute("data-mode", "enter")
       search_box.blur();
     }
+  }
+
+  function reset_app() {
+    words = allWords;
+    cur_guess = {
+      word: "",
+      correctness: new Array(5).fill(0)
+    }
+    guessedLetters.clear();
+    search_box.value = "";
+    set_search_mode(false);
+    boxes.forEach(box => box.setAttribute("data-correctness", "0"));
+    document
+      .querySelectorAll<HTMLButtonElement>(".keyboard button[data-correctness]")
+      .forEach(key => key.removeAttribute("data-correctness"));
+    update_guess(cur_guess.word);
+    set_result_words(words);
   }
 
   function update_guess(word: string) {
