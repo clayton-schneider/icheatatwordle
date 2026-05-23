@@ -1,6 +1,5 @@
 import './style.css';
-import allWords from "./words.json";
-let words = allWords;
+import all_words from "./words.json";
 
 (function() {
 
@@ -9,14 +8,22 @@ let words = allWords;
     correctness: number[];
   }
 
+  interface Guess_Constraints {
+    greens: Array<string | undefined>;
+    yellows: Map<number, string>;
+    min_counts: Map<string, number>;
+    max_counts: Map<string, number>;
+  }
+
 
   const ROW_HEIGHT = 64;
   const BUFFER_ROWS = 75;
 
-  let searchMode = false;
-  let resultWords: string[] = words;
-  let renderScheduled = false;
-  const guessedLetters = new Map<string, number>();
+  let search_mode = false;
+  let candidate_words = all_words;
+  let visible_words: string[] = candidate_words;
+  let render_scheduled = false;
+  const guessed_letters = new Map<string, number>();
 
   // Initial App Setup
   let cur_guess = {
@@ -40,45 +47,45 @@ let words = allWords;
     const target = e.target;
     if (!(target instanceof HTMLElement)) return;
 
-    const addButton = target.closest<HTMLElement>("[data-word]");
-    if (addButton === null) return;
+    const add_button = target.closest<HTMLElement>("[data-word]");
+    if (add_button === null) return;
 
-    cur_guess.word = addButton.dataset.word ?? "";
+    cur_guess.word = add_button.dataset.word ?? "";
     update_guess(cur_guess.word);
   });
 
-  let mode_btn_search_mode_on_pointerdown = searchMode;
+  let mode_btn_search_mode_on_pointerdown = search_mode;
   mode_btn.addEventListener("pointerdown", () => {
-    mode_btn_search_mode_on_pointerdown = searchMode;
+    mode_btn_search_mode_on_pointerdown = search_mode;
   });
   mode_btn.addEventListener("click", e => {
     // check if fired by keyboard or "real" click
     //
-    const mode_to_toggle = e.detail === 0 ? searchMode : mode_btn_search_mode_on_pointerdown;
+    const mode_to_toggle = e.detail === 0 ? search_mode : mode_btn_search_mode_on_pointerdown;
     set_search_mode(!mode_to_toggle);
   })
   reset_btn.addEventListener("click", reset_app);
   theme_toggle.addEventListener("click", toggle_theme);
 
   search_box.addEventListener("focusin", () => {
-    if (!searchMode) set_search_mode(true)
+    if (!search_mode) set_search_mode(true)
   });
   search_box.addEventListener("focusout", () => {
-    if (searchMode) set_search_mode(false)
+    if (search_mode) set_search_mode(false)
   });
   let search_timer: number | undefined;
   search_box.addEventListener("input", () => {
     clearTimeout(search_timer);
     search_timer = setTimeout(() => {
       const query = search_box.value.toLowerCase();
-      const w = words.filter(word => word.includes(query))
-      set_result_words(w)
+      const matching_words = candidate_words.filter(word => word.includes(query))
+      set_visible_words(matching_words)
     }, 100);
   })
 
 
 
-  set_result_words(words);
+  set_visible_words(candidate_words);
   boxes.forEach((box, box_idx) => {
     box.addEventListener("click", () => {
       cycle_box_correctness(box_idx)
@@ -96,10 +103,10 @@ let words = allWords;
 
     if (e.shiftKey && key == "tab") {
       e.preventDefault();
-      set_search_mode(!searchMode);
+      set_search_mode(!search_mode);
     }
 
-    if (searchMode) return
+    if (search_mode) return
 
     e.preventDefault();
     if ((e.ctrlKey || e.metaKey) && key === "r") {
@@ -128,7 +135,7 @@ let words = allWords;
 
       update_keyboard_colors(cur_guess);
       reduce_words(cur_guess);
-      set_result_words(words);
+      set_visible_words(candidate_words);
 
       cur_guess = {
         word: "",
@@ -141,7 +148,7 @@ let words = allWords;
       cur_guess.word = cur_guess.word.slice(0, cur_guess.word.length - 1);
       update_guess(cur_guess.word);
     } else if (key >= "1" && key <= "5") {
-      cycle_box_correctness(Number(key));
+      cycle_box_correctness(Number(key) - 1);
     } else {
       if (cur_guess.word.length === 5) { return; }
 
@@ -151,7 +158,7 @@ let words = allWords;
   }
 
   function set_search_mode(val: boolean) {
-    searchMode = val;
+    search_mode = val;
     if (val) {
       mode_btn.textContent = "Search Mode";
       mode_btn.setAttribute("data-mode", "search")
@@ -174,17 +181,17 @@ let words = allWords;
   }
 
   function toggle_theme() {
-    const isLight = document.documentElement.dataset.theme === "light";
-    apply_theme(isLight ? "dark" : "light");
+    const is_light = document.documentElement.dataset.theme === "light";
+    apply_theme(is_light ? "dark" : "light");
   }
 
   function reset_app() {
-    words = allWords;
+    candidate_words = all_words;
     cur_guess = {
       word: "",
       correctness: new Array(5).fill(0)
     }
-    guessedLetters.clear();
+    guessed_letters.clear();
     search_box.value = "";
     set_search_mode(false);
     boxes.forEach(box => box.setAttribute("data-correctness", "0"));
@@ -192,7 +199,7 @@ let words = allWords;
       .querySelectorAll<HTMLButtonElement>(".keyboard button[data-correctness]")
       .forEach(key => key.removeAttribute("data-correctness"));
     update_guess(cur_guess.word);
-    set_result_words(words);
+    set_visible_words(candidate_words);
   }
 
   function update_guess(word: string) {
@@ -211,74 +218,126 @@ let words = allWords;
     for (let i = 0; i < g.word.length; i++) {
       const letter = g.word[i];
       const correctness = g.correctness[i];
-      const previousCorrectness = guessedLetters.get(letter) ?? -1;
+      const previous_correctness = guessed_letters.get(letter) ?? -1;
 
-      if (correctness > previousCorrectness) {
-        guessedLetters.set(letter, correctness);
+      if (correctness > previous_correctness) {
+        guessed_letters.set(letter, correctness);
       }
     }
 
-    guessedLetters.forEach((correctness, letter) => {
+    guessed_letters.forEach((correctness, letter) => {
       const key = document.querySelector<HTMLButtonElement>(`.keyboard button[data-key="${letter}"]`);
       key?.setAttribute("data-correctness", correctness.toString());
     })
   }
 
   function reduce_words(g: Guess) {
-    words = words.filter(word => {
-      for (let i = 0; i < g.word.length; i++) {
-        // remove words with grey letter
-        if (g.correctness[i] === 0 && word.includes(g.word[i])) { return false; }
-
-        if (g.correctness[i] === 1) {
-          // make sure word doesn't have a yellow letter in same idx
-          if (word[i] === g.word[i]) { return false; }
-          // make sure word includes yellow letter
-          if (!word.includes(g.word[i])) { return false; }
-        }
-
-        // make sure word has green letter in proper place
-        if (g.correctness[i] === 2 && word[i] !== g.word[i]) { return false; }
-      }
-      // word has passed all filter checks
-      return true;
-    })
+    const constraints = get_guess_constraints(g);
+    candidate_words = candidate_words.filter(word => word_matches_constraints(word, constraints));
   }
 
-  function set_result_words(newWords: string[]) {
-    resultWords = newWords;
-    word_ct.innerText = resultWords.length.toString();
-    results_spacer.style.height = `${resultWords.length * ROW_HEIGHT}px`;
+  function get_guess_constraints(g: Guess): Guess_Constraints {
+    const greens: Array<string | undefined> = new Array(g.word.length).fill(undefined);
+    const yellows = new Map<number, string>();
+    const min_counts = new Map<string, number>();
+    const max_counts = new Map<string, number>();
+    const present_counts = new Map<string, number>();
+    const guessed_counts = count_letters(g.word);
+
+    for (let i = 0; i < g.word.length; i++) {
+      const letter = g.word[i];
+      const correctness = g.correctness[i];
+
+      if (correctness === 2) {
+        greens[i] = letter;
+        present_counts.set(letter, (present_counts.get(letter) ?? 0) + 1);
+      } else if (correctness === 1) {
+        yellows.set(i, letter);
+        present_counts.set(letter, (present_counts.get(letter) ?? 0) + 1);
+      }
+    }
+
+    present_counts.forEach((count, letter) => {
+      min_counts.set(letter, count);
+    });
+
+    guessed_counts.forEach((guess_count, letter) => {
+      const present_count = present_counts.get(letter) ?? 0;
+      if (present_count < guess_count) {
+        max_counts.set(letter, present_count);
+      }
+    });
+
+    return { greens, yellows, min_counts, max_counts };
+  }
+
+  function word_matches_constraints(word: string, constraints: Guess_Constraints): boolean {
+    const word_counts = count_letters(word);
+
+    for (let i = 0; i < constraints.greens.length; i++) {
+      const green = constraints.greens[i];
+      if (green !== undefined && word[i] !== green) { return false; }
+    }
+
+    for (const [idx, letter] of constraints.yellows) {
+      if (word[idx] === letter) { return false; }
+    }
+
+    for (const [letter, min_count] of constraints.min_counts) {
+      if ((word_counts.get(letter) ?? 0) < min_count) { return false; }
+    }
+
+    for (const [letter, max_count] of constraints.max_counts) {
+      if ((word_counts.get(letter) ?? 0) > max_count) { return false; }
+    }
+
+    return true;
+  }
+
+  function count_letters(word: string): Map<string, number> {
+    const counts = new Map<string, number>();
+
+    for (const letter of word) {
+      counts.set(letter, (counts.get(letter) ?? 0) + 1);
+    }
+
+    return counts;
+  }
+
+  function set_visible_words(new_words: string[]) {
+    visible_words = new_words;
+    word_ct.innerText = visible_words.length.toString();
+    results_spacer.style.height = `${visible_words.length * ROW_HEIGHT}px`;
     results_div.scrollTop = 0;
     render_virtual_words();
   }
 
   function schedule_virtual_render() {
-    if (renderScheduled) return;
+    if (render_scheduled) return;
 
-    renderScheduled = true;
+    render_scheduled = true;
     requestAnimationFrame(() => {
-      renderScheduled = false;
+      render_scheduled = false;
       render_virtual_words();
     })
   }
 
   function render_virtual_words() {
-    const containerHeight = results_div.clientHeight;
-    const scrollTop = results_div.scrollTop;
-    const startIndex = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - BUFFER_ROWS);
-    const endIndex = Math.min(
-      resultWords.length,
-      Math.ceil((scrollTop + containerHeight) / ROW_HEIGHT) + BUFFER_ROWS
+    const container_height = results_div.clientHeight;
+    const scroll_top = results_div.scrollTop;
+    const start_index = Math.max(0, Math.floor(scroll_top / ROW_HEIGHT) - BUFFER_ROWS);
+    const end_index = Math.min(
+      visible_words.length,
+      Math.ceil((scroll_top + container_height) / ROW_HEIGHT) + BUFFER_ROWS
     );
 
-    results_window.style.transform = `translateY(${startIndex * ROW_HEIGHT}px)`;
+    results_window.style.transform = `translateY(${start_index * ROW_HEIGHT}px)`;
     results_window.replaceChildren();
 
-    for (let i = startIndex; i < endIndex; i++) {
+    for (let i = start_index; i < end_index; i++) {
       const wrap_div = document.createElement('div');
       wrap_div.className = "result";
-      wrap_div.innerHTML = `<p>${resultWords[i]}</p><button type="button" data-word="${resultWords[i]}">Add</button>`;
+      wrap_div.innerHTML = `<p>${visible_words[i]}</p><button type="button" data-word="${visible_words[i]}">Add</button>`;
       results_window.appendChild(wrap_div);
     }
   }
