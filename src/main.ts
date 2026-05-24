@@ -173,7 +173,7 @@ import all_words from "./words.json";
   function apply_theme(theme: "light" | "dark") {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("theme", theme);
-    theme_toggle.textContent = theme === "light" ? "☾" : "☀";
+    theme_toggle.textContent = theme === "light" ? "☀" : "☾";
     theme_toggle.setAttribute(
       "aria-label",
       theme === "light" ? "Switch to dark mode" : "Switch to light mode"
